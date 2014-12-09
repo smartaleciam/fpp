@@ -27,6 +27,7 @@
 #include <pthread.h>
 #include <signal.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/time.h>
 #include <unistd.h>
@@ -43,6 +44,7 @@
 /* used by external sync code */
 int   RefreshRate = 20;
 int   DefaultLightDelay = 0;
+int   delayOffset = 0;
 int   LightDelay = 0;
 int   MasterFramesPlayed = -1;
 int   OutputFrames = 1;
@@ -90,6 +92,7 @@ void *RunChannelOutputThread(void *data)
 	long long startTime;
 	long long sendTime;
 	long long readTime;
+	int skippedLastFrame = 0;
 	int onceMore = 0;
 	struct timespec ts;
 	int syncFrameCounter = 0;
@@ -136,7 +139,23 @@ void *RunChannelOutputThread(void *data)
 		}
 
 		if (OutputFrames)
-			SendSequenceData();
+		{
+			// As long as we are within 2ms go ahead and send
+			if ((skippedLastFrame) ||
+				(delayOffset < 2000))
+			{
+				SendSequenceData();
+				skippedLastFrame = 0;
+			}
+			else
+			{
+				LogDebug(VB_CHANNELOUT,
+					"Trying to catch up, skipping output frame #%d\n",
+					channelOutputFrame);
+				channelOutputFrame++;
+				skippedLastFrame = 1;
+			}
+		}
 
 		sendTime = GetTime();
 
@@ -169,6 +188,8 @@ void *RunChannelOutputThread(void *data)
 		else
 		{
 			LightDelay = DefaultLightDelay;
+
+			delayOffset = 0;
 
 			if (onceMore)
 				onceMore = 0;
@@ -232,6 +253,8 @@ int StartChannelOutputThread(void)
 		DefaultLightDelay = 1000000 / RefreshRate;
 
 	LightDelay = DefaultLightDelay;
+
+	delayOffset = 0;
 
 	RunThread = 1;
 	int result = pthread_create(&ChannelOutputThreadID, NULL, &RunChannelOutputThread, NULL);
@@ -360,10 +383,12 @@ void CalculateNewChannelOutputDelayForFrame(int expectedFramesSent)
 		LogDebug(VB_CHANNELOUT, "LightDelay: %d, newLightDelay: %d\n",
 			LightDelay, newLightDelay);
 		LightDelay = newLightDelay;
+		delayOffset = DefaultLightDelay - LightDelay;
 	}
 	else if (LightDelay != DefaultLightDelay)
 	{
 		LightDelay = DefaultLightDelay;
+		delayOffset = 0;
 	}
 }
 
