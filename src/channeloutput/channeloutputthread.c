@@ -142,7 +142,7 @@ void *RunChannelOutputThread(void *data)
 		{
 			// As long as we are within 2ms go ahead and send
 			if ((skippedLastFrame) ||
-				(delayOffset < 2000))
+				(delayOffset < 1000))
 			{
 				SendSequenceData();
 				skippedLastFrame = 0;
