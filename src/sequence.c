@@ -70,7 +70,6 @@ int           seqDuration = 0;
 int           seqSecondsElapsed = 0;
 int           seqSecondsRemaining = 0;
 char          seqData[FPPD_MAX_CHANNELS] __attribute__ ((aligned (__BIGGEST_ALIGNMENT__)));
-char          prevSeqData[FPPD_MAX_CHANNELS] __attribute__ ((aligned (__BIGGEST_ALIGNMENT__)));
 
 char          seqLastControlMajor = 0;
 char          seqLastControlMinor = 0;
@@ -274,12 +273,6 @@ int OpenSequenceFile(const char *filename, int startSeconds) {
 		fseek(seqFile, newPos, SEEK_SET);
 	}
 
-	bzero(seqData, sizeof(seqData));
-	seqData[0] = seqData[FPPD_MAX_CHANNELS-1] = -1;
-	seqData[1] = seqData[FPPD_MAX_CHANNELS-2] = -2;
-	seqData[2] = seqData[FPPD_MAX_CHANNELS-3] = -3;
-	seqData[3] = seqData[FPPD_MAX_CHANNELS-4] = -4;
-	seqData[4] = seqData[FPPD_MAX_CHANNELS-5] = -5;
 	ReadSequenceData();
 
 	SetChannelOutputFrameNumber(frameNumber);
@@ -324,7 +317,6 @@ inline int IsSequenceRunning(void) {
 }
 
 void BlankSequenceData(void) {
-bzero(prevSeqData, sizeof(prevSeqData));
 	bzero(seqData, sizeof(seqData));
 }
 
@@ -378,7 +370,6 @@ void ReadSequenceData(void) {
 		bytesRead = 0;
 		if(seqFilePosition < seqFileSize - seqStepSize)
 		{
-memcpy(prevSeqData, seqData, seqStepSize);
 			bytesRead = fread(seqData, 1, seqStepSize, seqFile);
 			seqFilePosition += bytesRead;
 		}

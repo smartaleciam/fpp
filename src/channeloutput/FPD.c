@@ -126,19 +126,8 @@ int SendOutputBuffer(FPDPrivData *privData)
 	privData->dataWaiting = 0;
 	pthread_mutex_unlock(&privData->bufLock);
 
-int checkValues = 1;
-if ((!IsSequenceRunning()) ||
-    ((prevSeqData[0] == -1) && (prevSeqData[FPPD_MAX_CHANNELS-1] == -1) &&
-     (prevSeqData[1] == -2) && (prevSeqData[FPPD_MAX_CHANNELS-2] == -2) &&
-     (prevSeqData[2] == -3) && (prevSeqData[FPPD_MAX_CHANNELS-3] == -3) &&
-     (prevSeqData[3] == -4) && (prevSeqData[FPPD_MAX_CHANNELS-4] == -4) &&
-     (prevSeqData[4] == -5) && (prevSeqData[FPPD_MAX_CHANNELS-5] == -5)))
-checkValues = 0;
-
 	for(i = 0; i < PIXELNET_DMX_DATA_SIZE; i++, c++)
 	{
-if (checkValues && *c != prevSeqData[i])
-LogDebug(VB_SETTING, "FPD outBuf (%d) != seqData[%d] (%d)\n", *c, i, prevSeqData[i]);
 		if (*c == 170)
 		{
 			*c = 171;
