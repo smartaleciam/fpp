@@ -32,6 +32,7 @@ extern unsigned long seqFileSize;
 extern int  seqDuration;
 extern int  seqSecondsElapsed;
 extern int  seqSecondsRemaining;
+extern char prevSeqData[FPPD_MAX_CHANNELS];
 extern char seqData[FPPD_MAX_CHANNELS];
 extern char seqFilename[1024];
 
