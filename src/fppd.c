@@ -120,7 +120,9 @@ int main(int argc, char *argv[])
 	InitEffects();
 	InitializeChannelDataMemoryMap();
 
+#if 0
 #ifndef NOROOT
+	LogDebug(VB_GENERAL, "Elevating priority level\n");
 	struct sched_param param;
 	param.sched_priority = 99;
 	if (sched_setscheduler(0, SCHED_FIFO, &param) != 0)
@@ -128,6 +130,7 @@ int main(int argc, char *argv[])
 		perror("sched_setscheduler");
 		exit(EXIT_FAILURE);
 	}
+#endif
 #endif
 
 	MainLoop();
