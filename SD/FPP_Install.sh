@@ -12,7 +12,7 @@
 # To use this script, download the latest copy from github and run it as
 # root on the system where you want to install FPP:
 #
-# wget -O ./FPP_Install.sh https://raw.githubusercontent.com/FalconChristmas/fpp/BBB/SD/FPP_Install.sh
+# wget -O ./FPP_Install.sh https://raw.githubusercontent.com/smartaleciam/fpp/BBB/SD/FPP_Install.sh
 # chmod 700 ./FPP_Install.sh
 # sudo ./FPP_Install.sh
 #
@@ -143,7 +143,7 @@ fi
 case "${OSVER}" in
 	debian_7)
 		echo "FPP - Enabling non-free repo"
-		sed -i -e "s/^deb \(.*\)/deb \1 /" /etc/apt/sources.list
+#		sed -i -e "s/^deb \(.*\)/deb \1 non-free/" /etc/apt/sources.list
 
 		echo "FPP - Updating package list"
 		apt-get update
