@@ -143,7 +143,7 @@ fi
 case "${OSVER}" in
 	debian_7)
 		echo "FPP - Enabling non-free repo"
-		sed -i -e "s/^deb \(.*\)/deb \1 non-free/" /etc/apt/sources.list
+		sed -i -e "s/^deb \(.*\)/deb \1 /" /etc/apt/sources.list
 
 		echo "FPP - Updating package list"
 		apt-get update
